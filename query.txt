@@ -1,0 +1,126 @@
+ALTER TABLE `prebid_messages`
+ADD `createdAt` datetime NOT NULL,
+ADD `updatedAt` datetime NOT NULL AFTER `createdAt`;
+
+ALTER TABLE `prebid_messages`
+ADD FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
+
+
+///
+
+ALTER TABLE `prebid_messages`
+CHANGE `from_id` `from_id` bigint NOT NULL AFTER `reply_for`;
+
+ALTER TABLE `prebid_messages`
+CHANGE `from_id` `from_id` bigint unsigned NOT NULL AFTER `reply_for`;
+
+ALTER TABLE `prebid_messages`
+ADD FOREIGN KEY (`from_id`) REFERENCES `users` (`id`)
+
+
+
+// only for machinist
+Withdraw Funds
+Review Machinists 
+
+//
+
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+CREATE TABLE `copy_projects` LIKE `projects`;
+INSERT INTO `copy_projects` SELECT * FROM `projects`;
+
+//
+
+ALTER TABLE `bids`
+CHANGE `bid_days` `bid_days` int NULL AFTER `user_id`,
+CHANGE `bid_hours` `bid_hours` int NULL AFTER `bid_days`,
+CHANGE `bid_file` `bid_file` varchar(255) COLLATE 'latin1_swedish_ci' NULL AFTER `bid_hours`,
+CHANGE `bid_amount` `bid_amount` mediumint NULL AFTER `bid_file`,
+CHANGE `bid_amount_gbp` `bid_amount_gbp` int NULL AFTER `bid_amount`,
+CHANGE `bid_time` `bid_time` int NULL AFTER `bid_amount_gbp`,
+CHANGE `bid_desc` `bid_desc` text COLLATE 'utf8mb3_general_ci' NULL AFTER `bid_time`,
+CHANGE `lowbid_notify` `lowbid_notify` enum('0','1') COLLATE 'utf8mb3_general_ci' NULL AFTER `bid_desc`,
+CHANGE `escrow_flag` `escrow_flag` smallint NULL AFTER `lowbid_notify`,
+CHANGE `no_offer` `no_offer` int NULL COMMENT '1=offer, 2=Blank offer' AFTER `escrow_flag`;
+
+
+//
+
+ALTER TABLE `bids`
+ADD FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+
+ALTER TABLE `bids`
+ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+
+//
+
+ALTER TABLE `users`
+ADD `createdAt` datetime NULL;
+
+ALTER TABLE `users`
+ADD `updatedAt` datetime NULL;
+
+ALTER TABLE `users`
+ADD `last_seen` datetime NULL;
+
+ALTER TABLE `login_info`
+CHANGE `user_id` `user_id` bigint unsigned NOT NULL AFTER `id`;
+
+
+//
+
+
+ALTER TABLE `messages`
+CHANGE `reply_for` `reply_for` bigint unsigned NOT NULL AFTER `project_id`,
+CHANGE `from_id` `from_id` bigint unsigned NOT NULL AFTER `reply_for`;
+
+ALTER TABLE `messages`
+CHANGE `reply_for` `reply_for` bigint unsigned NULL AFTER `project_id`,
+CHANGE `buyer_message_status` `buyer_message_status` char(1) COLLATE 'latin1_swedish_ci' NULL AFTER `to_id`,
+CHANGE `programmer_message_status` `programmer_message_status` char(1) COLLATE 'latin1_swedish_ci' NULL AFTER `buyer_message_status`,
+CHANGE `provider_delete_status` `provider_delete_status` char(1) COLLATE 'latin1_swedish_ci' NULL AFTER `programmer_message_status`,
+CHANGE `buyer_delete_status` `buyer_delete_status` char(1) COLLATE 'latin1_swedish_ci' NULL AFTER `provider_delete_status`,
+CHANGE `notification_status` `notification_status` char(1) COLLATE 'latin1_swedish_ci' NULL DEFAULT '0' COMMENT 'P=\"Prebid\",N=\"Notifications\"' AFTER `created`,
+CHANGE `deluserid` `deluserid` longtext COLLATE 'latin1_swedish_ci' NULL AFTER `notification_status`,
+CHANGE `attach_file` `attach_file` varchar(150) COLLATE 'latin1_swedish_ci' NULL AFTER `deluserid`,
+CHANGE `approve` `approve` int NULL AFTER `attach_file`;
+
+//
+
+
+ALTER TABLE `messages`
+ADD FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`)
+
+
+
+
+//
+
+ALTER TABLE `reviews`
+CHANGE `comments` `comments` text COLLATE 'utf8mb3_general_ci' NULL AFTER `id`,
+CHANGE `rating` `rating` float(2,1) NULL AFTER `comments`,
+CHANGE `provider_rate1` `provider_rate1` float(2,1) NULL AFTER `rating`,
+CHANGE `provider_rate2` `provider_rate2` float(2,1) NULL AFTER `provider_rate1`,
+CHANGE `provider_rate3` `provider_rate3` float(2,1) NULL AFTER `provider_rate2`,
+CHANGE `provider_rate4` `provider_rate4` float(2,1) NULL AFTER `provider_rate3`,
+CHANGE `provider_rate5` `provider_rate5` float(2,1) NULL AFTER `provider_rate4`,
+CHANGE `provider_rate6` `provider_rate6` float(2,1) NULL AFTER `provider_rate5`,
+CHANGE `provider_rating_avg` `provider_rating_avg` float(2,1) NULL AFTER `provider_rate6`,
+CHANGE `emp_rate1` `emp_rate1` float(2,1) NULL AFTER `provider_rating_avg`,
+CHANGE `emp_rate2` `emp_rate2` float(2,1) NULL AFTER `emp_rate1`,
+CHANGE `emp_rate3` `emp_rate3` float(2,1) NULL AFTER `emp_rate2`,
+CHANGE `emp_rate4` `emp_rate4` float(2,1) NULL AFTER `emp_rate3`,
+CHANGE `emp_rate5` `emp_rate5` float(2,1) NULL AFTER `emp_rate4`,
+CHANGE `emp_rate6` `emp_rate6` float(2,1) NULL AFTER `emp_rate5`,
+CHANGE `emp_rating_avg` `emp_rating_avg` float(2,1) NULL AFTER `emp_rate6`,
+CHANGE `review_time` `review_time` int NULL AFTER `emp_rating_avg`,
+CHANGE `review_post_date` `review_post_date` datetime NULL AFTER `review_time`,
+CHANGE `review_type` `review_type` enum('1','2') COLLATE 'utf8mb3_general_ci' NULL AFTER `review_post_date`,
+CHANGE `hold` `hold` enum('0','1') COLLATE 'latin1_swedish_ci' NULL AFTER `provider_id`,
+CHANGE `buyer_status` `buyer_status` varchar(20) COLLATE 'latin1_swedish_ci' NULL AFTER `hold`,
+CHANGE `provider_status` `provider_status` varchar(20) COLLATE 'latin1_swedish_ci' NULL AFTER `buyer_status`,
+CHANGE `country_code` `country_code` int NULL AFTER `provider_status`;
+
+//
+
+

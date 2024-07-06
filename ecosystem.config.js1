@@ -1,0 +1,8 @@
+module.exports = {
+  apps: [
+    {
+      name: "BACKENDAPP",
+      script: "dist/client/app.js",
+    },
+  ],
+};
